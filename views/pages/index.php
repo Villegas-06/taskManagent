@@ -25,7 +25,7 @@ $tasks = $object->getTasks();
 			</div>
 		</div>
 		<hr>
-		<table class="table table-bordered" id="tablaCliente">
+		<table class="table table-bordered" id="tableTask">
 			<thead class="thead-dark">
 				<tr>
 					<th scope="col">id</th>
@@ -67,13 +67,12 @@ $tasks = $object->getTasks();
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="agregarDatosModalLabel">Insertar nuevos registros</h5>
+				<h5 class="modal-title" id="agregarDatosModalLabel">Insertar nueva tarea</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="index.php?page=insertar" method="POST" name="registroForm" id="registroForm"
-				class="text-left">
+			<form action="index.php?page=insert" method="POST" name="registroForm" id="registroForm" class="text-left">
 				<div class="modal-body">
 					<div class="form-group">
 						<label for="name">Nombre *</label> <small id="nameHelp" class="form-text text-muted">Ingrese el
@@ -99,14 +98,16 @@ $tasks = $object->getTasks();
 					<select id="status" name="status" class="form-control" aria-describedby="statusHelp" required>
 						<option value="">Selecciona un estado</option>
 						<option value="pending">Pendiente</option>
-						<option value="in_progress">En progreso</option>
+						<option value="in-progress">En progreso</option>
 						<option value="completed">Completada</option>
 					</select>
 
 
+
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+					<button type="button" id="btnCerrar" class="btn btn-secondary"
+						data-bs-dismiss="modal">Cerrar</button>
 					<button type="button" id="btnInsertar" name="btnInsertar" class="btn btn-primary">Insertar</button>
 				</div>
 			</form>
@@ -116,29 +117,62 @@ $tasks = $object->getTasks();
 
 <script type="text/javascript">
 	$(document).ready(function () {
-		$('#tablaCliente').load();
+		$('#tableTask').load();
 	})
 
 
 	$(document).ready(function () {
 		$('#btnInsertar').click(function () {
-			datos = $('#registroForm').serialize();
+			var valid = true;
+			var name = $('#name').val();
+			var description = $('#description').val();
+			var status = $('#status').val();
 
-			$.ajax({
-				type: "POST",
-				data: datos,
-				url: "insertar.php",
-				success: function (r) {
-					// if (r==1) {
-					// 	$('#registroForm')[0].reset();
-					// 	$('#tablaCliente').load();
-					// 	alert ("Agregado Ok!");
-					// } else {
-					// 	alert("Fallo al agregar");
-					// }
-					alert(r);
-				}
-			});
+			// Limpiar mensajes de error
+			$('.form-text.text-danger').remove();
+
+			if (name === '') {
+				$('#name').after('<small class="form-text text-danger">El nombre es obligatorio.</small>');
+				valid = false;
+			}
+
+			if (description === '') {
+				$('#description').after('<small class="form-text text-danger">La descripción es obligatoria.</small>');
+				valid = false;
+			}
+
+			if (status === '') {
+				$('#status').after('<small class="form-text text-danger">El estado es obligatorio.</small>');
+				valid = false;
+			}
+
+			if (valid) {
+				// Serializar datos y hacer solicitud AJAX
+				var data = $('#registroForm').serialize();
+
+				$.ajax({
+					type: "POST",
+					data: data,
+					url: "index.php?page=insert",
+					dataType: "json",
+					success: function (response) {
+						console.log(response);
+						if (response.status === 'success') {
+							$('#registroForm')[0].reset();
+							$('#tableTask').load('index.php?page=index #tableTask'); // Recargar la tabla
+							alert(response.message);
+							$('#insertarRegistroModal').modal('hide');
+						} else {
+							alert(response.message);
+						}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						console.error("Error en la solicitud:", textStatus, errorThrown);
+						alert("Hubo un problema con la solicitud.");
+					}
+				});
+			}
 		});
 	});
+
 </script>

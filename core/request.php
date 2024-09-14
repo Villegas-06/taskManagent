@@ -2,29 +2,31 @@
 
 require_once 'config.php';
 
-$page = $_GET['page'];
+$page = isset($_GET['page']) ? $_GET['page'] : '';
 
-if(!empty($page)){
+if (!empty($page)) {
     $data = array(
         'index' => array('model' => 'TaskModel', 'view' => 'index', 'controller' => 'TaskController'),
-        'insertar' => array('model' => 'TaskModel', 'view' => 'insertar', 'controller' => 'TaskController'),
+        'insert' => array('model' => 'TaskModel', 'view' => 'handleAjaxInsert', 'controller' => 'TaskController'),
         'editar' => array('model' => 'TaskModel', 'view' => 'editar', 'controller' => 'TaskController'),
     );
 
-    foreach($data as $key => $components){
-        if($page == $key){
-            $model = $components['model'];
-            $view = $components['view'];
-            $controller = $components['controller'];
-            break;
-        }
-    }
+    if (array_key_exists($page, $data)) {
+        $components = $data[$page];
+        $model = $components['model'];
+        $view = $components['view'];
+        $controller = $components['controller'];
 
-    if(isset($model)){
-        require_once 'controllers/' .$controller.'.php';
+        require_once 'controllers/' . $controller . '.php';
         $object = new $controller();
-        $object->$view();
+        if ($view === 'handleAjaxInsert') {
+            $object->handleAjaxInsert();
+        } else {
+            $object->$view();
+        }
+    } else {
+        header('Location: index.php?page=index');
     }
-}else{
+} else {
     header('Location: index.php?page=index');
 }

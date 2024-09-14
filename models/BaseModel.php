@@ -22,11 +22,12 @@ class BaseModel extends DB
             $q = $this->db->prepare($sql);
             return $q->execute($data);
         } catch (PDOException $e) {
-            echo $e->getMessage();
+            echo "Error en la inserción: " . $e->getMessage();
         } catch (Exception $e) {
-            echo $e->getMessage();
+            echo "Error: " . $e->getMessage();
         }
     }
+
 
     public function edit($table, $id, $data)
     {
@@ -54,9 +55,12 @@ class BaseModel extends DB
     public function getAll($query)
     {
         try {
-            return $this->db->query($query);
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
     }
+
 }

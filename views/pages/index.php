@@ -45,11 +45,13 @@ $tasks = $object->getTasks();
 							<td><?= $r['description']; ?></td>
 							<td><?= $r['status']; ?></td>
 							<td>
-								<a href="?page=editar&id=<?= $r['id']; ?>" type="a" class="btn btn-info">Editar</a>
+								<button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-info"
+									onclick="loadTaskData(<?= $r['id']; ?>)">Editar</button>
 							</td>
 						</tr>
 					<?php }
 				} ?>
+
 			</tbody>
 		</table>
 		<div class="text-left">
@@ -85,8 +87,8 @@ $tasks = $object->getTasks();
 						<label for="description">Descripción *</label>
 						<small id="descriptionHelp" class="form-text text-muted">Ingrese la descripción de la
 							tarea.</small>
-						<input type="text" id="description" name="description" class="form-control"
-							aria-describedby="descriptionHelp" required>
+						<textarea type="text" id="description" name="description" class="form-control"
+							aria-describedby="descriptionHelp" required></textarea>
 
 					</div>
 
@@ -111,6 +113,47 @@ $tasks = $object->getTasks();
 					<button type="button" id="btnInsertar" name="btnInsertar" class="btn btn-primary">Insertar</button>
 				</div>
 			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Modal para Editar -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="editModalLabel">Editar Tarea</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="editForm">
+					<div class="modal-body">
+						<input type="hidden" id="editTaskId" name="id" />
+						<div class="form-group">
+							<label for="editName">Nombre</label>
+							<input type="text" class="form-control" id="editName" name="name" required />
+						</div>
+						<div class="form-group">
+							<label for="editDescription">Descripción</label>
+							<textarea class="form-control" id="editDescription" name="description" required></textarea>
+						</div>
+						<div class="form-group">
+							<label for="editStatus">Estado</label>
+							<select class="form-control" id="editStatus" name="status" required>
+								<option value="pending">Pendiente</option>
+								<option value="in-progress">En Progreso</option>
+								<option value="completed">Completado</option>
+							</select>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
@@ -174,5 +217,60 @@ $tasks = $object->getTasks();
 			}
 		});
 	});
+
+	// Cargar los datos en el modal
+	function loadTaskData(taskId) {
+		$.ajax({
+			type: "GET",
+			url: "index.php?page=getTaskByid", // Verifica esta URL
+			data: { id: taskId },
+			dataType: "json",
+			success: function (response) {
+				if (response.status === 'success') {
+					var task = response.data;
+					$('#editTaskId').val(task.id);
+					$('#editName').val(task.name);
+					$('#editDescription').val(task.description);
+					$('#editStatus').val(task.status);
+					$('#editModal').modal('show');
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log("Error details:", textStatus, errorThrown);
+				alert("Hubo un problema con la solicitud.");
+			}
+		});
+
+	}
+
+
+	// Manejar el envío del formulario de edición
+	$('#editForm').on('submit', function (event) {
+		event.preventDefault();
+
+		var data = $(this).serialize();
+
+		$.ajax({
+			type: "POST",
+			url: "index.php?page=update",
+			data: data,
+			dataType: "json",
+			success: function (response) {
+				if (response.status === 'success') {
+					$('#editModal').modal('hide');
+					$('#tableTask').load('index.php?page=index #tableTask'); // Recargar la tabla
+					alert(response.message);
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function () {
+				alert("Hubo un problema con la solicitud.");
+			}
+		});
+	});
+
 
 </script>

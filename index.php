@@ -1,5 +1,5 @@
 <?php
 
-    require('core/request.php')
+    require 'core/request.php';
 
 ?>

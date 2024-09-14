@@ -6,7 +6,7 @@ $page = $_GET['page'];
 
 if(!empty($page)){
     $data = array(
-        'inicio' => array('model' => 'TaskModel', 'view' => 'inicio', 'controller' => 'TaskController'),
+        'index' => array('model' => 'TaskModel', 'view' => 'index', 'controller' => 'TaskController'),
         'insertar' => array('model' => 'TaskModel', 'view' => 'insertar', 'controller' => 'TaskController'),
         'editar' => array('model' => 'TaskModel', 'view' => 'editar', 'controller' => 'TaskController'),
     );
@@ -26,5 +26,5 @@ if(!empty($page)){
         $object->$view();
     }
 }else{
-    header('Location: index.php?page=inicio');
+    header('Location: index.php?page=index');
 }

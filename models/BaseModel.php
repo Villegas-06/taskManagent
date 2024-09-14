@@ -32,25 +32,31 @@ class BaseModel extends DB
     public function edit($table, $id, $data)
     {
         try {
-            $fields = array();
-
-            foreach ($data as $keys => $elem) {
-                $fields = " " . $keys . "=:" . $keys;
+            // Construir una cadena de campos para la consulta SQL
+            $fields = [];
+            foreach ($data as $key => $value) {
+                $fields[] = "$key = :$key";
             }
+            $fieldsString = implode(", ", $fields);
 
-            $string = implode(", ", $fields);
-
-            $sql = "UPDATE $table SET $string WHERE id=:id";
+            // Crear la consulta SQL
+            $sql = "UPDATE $table SET $fieldsString WHERE id = :id";
             $q = $this->db->prepare($sql);
 
+            // Añadir el ID al array de datos
             $data['id'] = $id;
+
+            // Ejecutar la consulta
             return $q->execute($data);
         } catch (PDOException $e) {
-            echo $e->getMessage();
+            echo "Error: " . $e->getMessage();
+            return false;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            echo "Error: " . $e->getMessage();
+            return false;
         }
     }
+
 
     public function getAll($query)
     {

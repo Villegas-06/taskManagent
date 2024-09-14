@@ -42,11 +42,13 @@ class TaskModel extends BaseModel
     {
         $db = new BaseModel();
         try {
-            $edit = $db->edit('task', $id, $data);
+            return $db->edit('task', $id, $data);
         } catch (PDOException $e) {
-            echo $e->getMessage();
+            echo "Error: " . $e->getMessage();
+            return false; // Devolver false en caso de error
         }
     }
+
 
     public function editTask($id, $data)
     {

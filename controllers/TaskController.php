@@ -145,7 +145,6 @@ class TaskController
 
                 $task = new TaskModel();
                 $update = $task->updateTask($taskId, $data);
-
                 if ($update) {
                     echo json_encode(['status' => 'success', 'message' => 'Tarea actualizada con éxito']);
                 } else {

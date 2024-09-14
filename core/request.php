@@ -9,7 +9,7 @@ if (!empty($page)) {
     $data = array(
         'index' => array('model' => 'TaskModel', 'view' => 'index', 'controller' => 'TaskController'),
         'insert' => array('model' => 'TaskModel', 'view' => 'insert', 'controller' => 'TaskController'),
-        'editar' => array('model' => 'TaskModel', 'view' => 'editar', 'controller' => 'TaskController'),
+        'update' => array('model' => 'TaskModel', 'view' => 'updateTask', 'controller' => 'TaskController'),
         'getTaskByid' => array('model' => 'TaskModel', 'view' => 'getTaskByid', 'controller' => 'TaskController')
     );
 

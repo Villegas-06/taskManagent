@@ -76,17 +76,34 @@ $tasks = $object->getTasks();
 				class="text-left">
 				<div class="modal-body">
 					<div class="form-group">
-						<label for="nombre">Nombre</label>
-						<input type="text" id="nombre" name="nombre" class="form-control" aria-describedby="nombreHelp">
-						<small id="nombreHelp" class="form-text text-muted">Ingrese el nombre completo del
-							cliente.</small>
+						<label for="name">Nombre *</label> <small id="nameHelp" class="form-text text-muted">Ingrese el
+							nombre de la tarea</small>
+						<input type="text" id="name" name="name" class="form-control" aria-describedby="nameHelp"
+							required>
+
 					</div>
 					<div class="form-group">
-						<label for="email">E-mail</label>
-						<input type="email" id="email" name="email" class="form-control" aria-describedby="emailHelp">
-						<small id="emailHelp" class="form-text text-muted">Ingrese el correo electronico del
-							cliente.</small>
+						<label for="description">Descripción *</label>
+						<small id="descriptionHelp" class="form-text text-muted">Ingrese la descripción de la
+							tarea.</small>
+						<input type="text" id="description" name="description" class="form-control"
+							aria-describedby="descriptionHelp" required>
+
 					</div>
+
+					<div class="form-group">
+						<label for="status">Estado *</label>
+						<small id="statusHelp" class="form-text text-muted">Selecciona el estado actual de la
+							tarea.</small>
+					</div>
+					<select id="status" name="status" class="form-control" aria-describedby="statusHelp" required>
+						<option value="">Selecciona un estado</option>
+						<option value="pending">Pendiente</option>
+						<option value="in_progress">En progreso</option>
+						<option value="completed">Completada</option>
+					</select>
+
+
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

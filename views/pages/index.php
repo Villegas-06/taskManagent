@@ -32,26 +32,42 @@ $tasks = $object->getTasks();
 					<th scope="col">nombre</th>
 					<th scope="col">descripci&oacute;n</th>
 					<th scope="col">estado</th>
+					<th scope="col">acciones</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php
 				if (!empty($tasks)) {
 					foreach ($tasks as $r) {
+						// Determinar el icono basado en el estado
+						switch ($r['status']) {
+							case 'pending':
+								$icon = '<i class="fas fa-hourglass-start" style="color: #00aaff" title="Pendiente" data-bs-toggle="tooltip" data-bs-placement="top"></i>'; // Icono para "Pending"
+								break;
+							case 'in-progress':
+								$icon = '<i class="fas fa-spinner" style="color: #00aaff" title="En progreso" data-bs-toggle="tooltip" data-bs-placement="top"></i>'; // Icono para "In Progress"
+								break;
+							case 'completed':
+								$icon = '<i class="fas fa-check-circle" style="color: #00aaff" title="Completado" data-bs-toggle="tooltip" data-bs-placement="top"></i>'; // Icono para "Completed"
+								break;
+							default:
+								$icon = '<i class="fas fa-question-circle" style="color: #00aaff" title="Desconocido" data-bs-toggle="tooltip" data-bs-placement="top"></i>'; // Icono para estado desconocido
+						}
 						?>
 						<tr>
 							<th scope="row"><?= $r['id']; ?></th>
 							<td><?= $r['name']; ?></td>
 							<td><?= $r['description']; ?></td>
-							<td><?= $r['status']; ?></td>
+							<td class="text-center"><?= $icon; ?></td> <!-- Mostrar el icono centrado -->
 							<td>
 								<button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-info"
 									onclick="loadTaskData(<?= $r['id']; ?>)">Editar</button>
 							</td>
 						</tr>
-					<?php }
-				} ?>
-
+						<?php
+					}
+				}
+				?>
 			</tbody>
 		</table>
 		<div class="text-left">
@@ -157,12 +173,17 @@ $tasks = $object->getTasks();
 		</div>
 	</div>
 </div>
-
 <script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function () {
+		var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+		var tooltipList = tooltips.map(function (tooltipTriggerEl) {
+			return new bootstrap.Tooltip(tooltipTriggerEl);
+		});
+	});
+
 	$(document).ready(function () {
 		$('#tableTask').load();
-	})
-
+	});
 
 	$(document).ready(function () {
 		$('#btnInsertar').click(function () {
@@ -203,15 +224,27 @@ $tasks = $object->getTasks();
 						if (response.status === 'success') {
 							$('#registroForm')[0].reset();
 							$('#tableTask').load('index.php?page=index #tableTask'); // Recargar la tabla
-							alert(response.message);
+							Swal.fire({
+								icon: 'success',
+								title: 'Éxito',
+								text: response.message
+							});
 							$('#insertarRegistroModal').modal('hide');
 						} else {
-							alert(response.message);
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: response.message
+							});
 						}
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
 						console.error("Error en la solicitud:", textStatus, errorThrown);
-						alert("Hubo un problema con la solicitud.");
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: "Hubo un problema con la solicitud."
+						});
 					}
 				});
 			}
@@ -234,17 +267,23 @@ $tasks = $object->getTasks();
 					$('#editStatus').val(task.status);
 					$('#editModal').modal('show');
 				} else {
-					alert(response.message);
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: response.message
+					});
 				}
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				console.log("Error details:", textStatus, errorThrown);
-				alert("Hubo un problema con la solicitud.");
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: "Hubo un problema con la solicitud."
+				});
 			}
 		});
-
 	}
-
 
 	// Manejar el envío del formulario de edición
 	$('#editForm').on('submit', function (event) {
@@ -261,16 +300,26 @@ $tasks = $object->getTasks();
 				if (response.status === 'success') {
 					$('#editModal').modal('hide');
 					$('#tableTask').load('index.php?page=index #tableTask'); // Recargar la tabla
-					alert(response.message);
+					Swal.fire({
+						icon: 'success',
+						title: 'Éxito',
+						text: response.message
+					});
 				} else {
-					alert(response.message);
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: response.message
+					});
 				}
 			},
 			error: function () {
-				alert("Hubo un problema con la solicitud.");
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: "Hubo un problema con la solicitud."
+				});
 			}
 		});
 	});
-
-
 </script>

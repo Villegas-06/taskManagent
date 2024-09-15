@@ -8,7 +8,7 @@ $id = isset($_GET['id']) ? $_GET['id'] : null; // Obtener el parámetro ID si ex
 if (!empty($page)) {
     $data = array(
         'index' => array('model' => 'TaskModel', 'view' => 'index', 'controller' => 'TaskController'),
-        'insert' => array('model' => 'TaskModel', 'view' => 'insert', 'controller' => 'TaskController'),
+        'insert' => array('model' => 'TaskModel', 'view' => 'handleAjaxInsert', 'controller' => 'TaskController'),
         'update' => array('model' => 'TaskModel', 'view' => 'updateTask', 'controller' => 'TaskController'),
         'getTaskByid' => array('model' => 'TaskModel', 'view' => 'getTaskByid', 'controller' => 'TaskController')
     );
